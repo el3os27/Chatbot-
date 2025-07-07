@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant Chatbot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
+            --accent-color: #4fc3f7;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --border-radius: 10px;
+            --box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            color: #333;
+        }
+
+        .site-logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 28px;
+            font-weight: 700;
+            z-index: 100;
+        }
+
+        .logo-part1 {
+            color: var(--light-color);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .logo-part2 {
+            color: var(--accent-color);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .chat-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 800px;
+            padding: 30px;
+            margin-top: 60px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-container h2 {
+            font-size: 24px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .chat-box {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            background-color: rgba(248, 249, 250, 0.7);
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 80%;
+            display: flex;
+            align-items: flex-start;
+            line-height: 1.5;
+            position: relative;
+            animation: messageFadeIn 0.3s ease-out;
+        }
+
+        @keyframes messageFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            background-color: var(--primary-color);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot-message {
+            background-color: rgba(74, 111, 165, 0.1);
+            color: var(--dark-color);
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+        }
+
+        .icon {
+            width: 32px;
+            height: 32px;
+            margin-right: 12px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-icon {
+            background-color: white;
+            padding: 4px;
+        }
+
+        .bot-icon {
+            background-color: var(--primary-color);
+            padding: 4px;
+        }
+
+        .input-group {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .input-group input {
+            flex: 1;
+            border-radius: 25px;
+            padding: 14px 20px;
+            border: 1px solid rgba(0,0,0,0.1);
+            font-size: 16px;
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.9);
+            transition: var(--transition);
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
+        }
+
+        .input-group button {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            width: 50px;
+            height: 50px;
+            margin-left: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-group button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .chat-box::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb {
+            background-color: rgba(74, 111, 165, 0.3);
+            border-radius: 10px;
+        }
+
+        .chat-box::-webkit-scrollbar-track {
+            background-color: rgba(74, 111, 165, 0.1);
+        }
+
+        .timestamp {
+            font-size: 11px;
+            color: rgba(0,0,0,0.4);
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px;
+            color: #666;
+            font-style: italic;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                padding: 20px 15px;
+                margin-top: 80px;
+                height: 85vh;
+            }
+
+            .site-logo {
+                position: absolute;
+                top: 15px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 100%;
+                text-align: center;
+            }
+
+            .message {
+                max-width: 90%;
+                padding: 10px 14px;
+            }
+
+            .icon {
+                width: 28px;
+                height: 28px;
+                margin-right: 8px;
+            }
+
+            .input-group input {
+                padding: 12px 16px;
+                font-size: 15px;
+            }
+
+            .input-group button {
+                width: 45px;
+                height: 45px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="site-logo">
+        <span class="logo-part1">OptiCare</span><span class="logo-part2">Hospital</span>
+    </div>
+
+    <div class="chat-container">
+        <h2>AI Assistant Chatbot</h2>
+        <div class="chat-box" id="chat-messages">
+            <div class="message bot-message">
+                <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" alt="Bot Icon" class="icon bot-icon">
+                <div>
+                    Hello! I'm your AI assistant. How can I help you today?
+                    <div class="timestamp">Just now</div>
+                </div>
+            </div>
+        </div>
+        <div class="typing-indicator" id="typing-indicator">
+            <i class="fas fa-circle-notch fa-spin"></i> Thinking...
+        </div>
+        <div class="input-group">
+            <input type="text" id="user-input" placeholder="Type your message here..." autocomplete="off">
+            <button id="send-button"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const typingIndicator = document.getElementById('typing-indicator');
+        
+        // Function to detect if text contains Arabic
+        function containsArabic(text) {
+            const arabicPattern = /[\u0600-\u06FF]/;
+            return arabicPattern.test(text);
+        }
+
+        // Function to get appropriate system message based on input language
+        function getSystemMessage(isArabic) {
+            return isArabic 
+                ? "أنت مساعد ذكي يتحدث العربية والإنجليزية. عندما يسأل المستخدم بالعربية، أجب بالعربية. وعندما يسأل بالإنجليزية، أجب بالإنجليزية."
+                : "You are a bilingual AI assistant that speaks both English and Arabic. When users ask in English, respond in English. When they ask in Arabic, respond in Arabic.";
+        }
+        
+        // Your API key should be stored securely on the backend
+        // للحصول على مفتاح API: https://openrouter.ai/keys
+        // To get an API key: https://openrouter.ai/keys
+        const API_KEY = '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';
+
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            
+            const icon = document.createElement('img');
+            icon.src = 'https://cdn-icons-png.flaticon.com/512/4712/4712035.png';
+            icon.alt = isUser ? 'User Icon' : 'Bot Icon';
+            icon.className = `icon ${isUser ? 'user-icon' : 'bot-icon'}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.textContent = message;
+            
+            const timestamp = document.createElement('div');
+            timestamp.className = 'timestamp';
+            timestamp.textContent = getCurrentTime();
+            
+            contentDiv.appendChild(timestamp);
+            
+            messageDiv.appendChild(icon);
+            messageDiv.appendChild(contentDiv);
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function getCurrentTime() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+
+            return `${hours}:${minutes} ${ampm}`;
+        }
+        
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            addMessage(message, true);
+            userInput.value = '';
+            typingIndicator.style.display = 'block';
+
+            try {
+                // Add timeout to the fetch request
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
+                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    signal: controller.signal,
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'HTTP-Referer': window.location.href,
+                        'X-Title': 'AI Chatbot'
+                    },
+                    body: JSON.stringify({
+                        model: 'qwen/qwen3-30b-a3b:free',
+                        messages: [
+                            {
+                                role: "system",
+                                content: getSystemMessage(containsArabic(message))
+                            },
+                            {
+                                role: "assistant",
+                                content: containsArabic(message) 
+                                    ? "مرحباً! كيف يمكنني مساعدتك؟"
+                                    : "Hello! How can I help you?"
+                            },
+                            {
+                                role: "user",
+                                content: message
+                            }
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 800,
+                        stream: false
+                    })
+                });
+
+                clearTimeout(timeoutId); // Clear the timeout if request succeeds
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Response not OK:', response.status, errorText);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log('API Response:', data); // Debug log
+                typingIndicator.style.display = 'none';
+
+                if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+                    addMessage(data.choices[0].message.content);
+                } else if (data.error) {
+                    console.error('API Error:', data.error);
+                    const errorMessage = containsArabic(message)
+                        ? `عذراً، حدث خطأ: ${data.error.message}`
+                        : `Sorry, an error occurred: ${data.error.message}`;
+                    addMessage(errorMessage);
+                } else {
+                    console.error('Unexpected API response:', data);
+                    const errorMessage = containsArabic(message)
+                        ? 'عذراً، حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.'
+                        : 'I apologize, but I received an unexpected response. Please try again.';
+                    addMessage(errorMessage);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                typingIndicator.style.display = 'none';
+                
+                let errorMessage;
+                if (error.name === 'AbortError') {
+                    errorMessage = containsArabic(message)
+                        ? 'عذراً، استغرق الطلب وقتاً طويلاً. يرجى المحاولة مرة أخرى.'
+                        : 'Sorry, the request took too long. Please try again.';
+                } else if (!navigator.onLine) {
+                    errorMessage = containsArabic(message)
+                        ? 'يرجى التحقق من اتصال الإنترنت الخاص بك والمحاولة مرة أخرى.'
+                        : 'Please check your internet connection and try again.';
+                } else {
+                    errorMessage = containsArabic(message)
+                        ? 'عذراً، حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى بعد قليل.'
+                        : 'I apologize, but I encountered a connection issue. Please try again in a moment.';
+                }
+                addMessage(errorMessage);
+            }
+        }
+
+        // Event listeners
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+        userInput.focus();
+    </script>
+</body>
+</html>
